@@ -45,32 +45,19 @@ class RNIsland: RCTEventEmitter {
 
     @objc
     @available(iOS 16.2, *)
-    func startIslandActivity(_ data: [String: Any]) {
+    func startIslandActivity(_ data: [String: String], resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
         if areActivitiesEnabled() {
-            // Debug each component
-            let components = [
-                ("header", data["headerComponentId"] as? String ?? "", data["headerProps"] as? String ?? ""),
-                ("body", data["bodyComponentId"] as? String ?? "", data["bodyProps"] as? String ?? ""),
-                ("footer", data["footerComponentId"] as? String ?? "", data["footerProps"] as? String ?? "")
-            ]
-            
-            for (type, componentId, props) in components {
-                if !componentId.isEmpty {
-                    print("Pre-rendering \(type) component...")
-                    debugComponentRendering(componentId: componentId, props: props)
-                    preRenderComponent(componentId: componentId, props: props)
-                }
-            }
+            handlePrerendering(data: data)
             
             // Start the activity after a delay to allow pre-rendering
             DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
                 let attributes = DynamicWidgetExtensionAttributes.ContentState(
                     headerComponentId: data["headerComponentId"] as? String ?? "",
-                    headerProps: data["headerProps"] as? String ?? "",
                     bodyComponentId: data["bodyComponentId"] as? String ?? "",
-                    bodyProps: data["bodyProps"] as? String ?? "",
                     footerComponentId: data["footerComponentId"] as? String ?? "",
-                    footerProps: data["footerProps"] as? String ?? ""
+                    compactLeadingComponentId: data["compactLeadingComponentId"] as? String ?? "",
+                    compactTrailingComponentId: data["compactTrailingComponentId"] as? String ?? "",
+                    minimalComponentId: data["minimalComponentId"] as? String ?? ""
                 )
                 
                 do {
@@ -79,14 +66,16 @@ class RNIsland: RCTEventEmitter {
                         contentState: attributes
                     )
                     print("Activity started with ID: \(activity.id)")
+                    resolve(activity.id)
                 } catch {
                     print("Error starting activity: \(error)")
+                    reject("ACTIVITY_START_ERROR", "Error starting activity", error)
                 }
             }
         }
     }
 
-    private func preRenderComponent(componentId: String, props: String) {
+    private func preRenderComponent(componentId: String) {
         guard !componentId.isEmpty else { return }
         
         DispatchQueue.main.async {
@@ -96,7 +85,7 @@ class RNIsland: RCTEventEmitter {
                 self.captureViewImage(existingView, componentId: componentId)
             } else {
                 print("No existing view found for component: \(componentId), creating new one")
-                self.createAndRenderComponent(componentId: componentId, props: props)
+                self.createAndRenderComponent(componentId: componentId)
             }
         }
     }
@@ -125,7 +114,7 @@ class RNIsland: RCTEventEmitter {
         print("Successfully captured existing view for component: \(componentId) with size: \(image.size)")
     }
 
-    private func createAndRenderComponent(componentId: String, props: String) {
+    private func createAndRenderComponent(componentId: String) {
         // Fallback to creating a new view (your existing implementation)
         guard let bridge = RCTBridge.current() else {
             print("Error: No React Native bridge available")
@@ -138,7 +127,7 @@ class RNIsland: RCTEventEmitter {
             moduleName: "DynamicLiveActivity",
             initialProperties: [
                 "componentId": componentId,
-                "props": props
+                "props": ""
             ]
         )
         
@@ -180,31 +169,45 @@ class RNIsland: RCTEventEmitter {
         }
     }
 
+    private func handlePrerendering(data: [String: String]) {
+        let components = ["header", "body", "footer", "compactTrailing", "compactLeading", "minimal"]
+            
+        for id in components {
+            print("Pre-rendering \(id) component...")
+            debugComponentRendering(componentId: id)
+            preRenderComponent(componentId: id)
+        }
+        
+    }
+
     @objc
     @available(iOS 16.2, *)
-    func updateIslandActivity(_ data: [String: Any]) {
+    func updateIslandActivity(_ data: [String: String], resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
         if areActivitiesEnabled() {
             guard let activityId = data["id"] as? String else {
                 print("Error: Activity ID is required for update")
+                reject("ACTIVITY_ID_REQUIRED", "Activity ID is required for update", nil)
                 return
             }
+
+            handlePrerendering(data: data)
             
             // Find the activity by ID
             if let activity = Activity<DynamicWidgetExtensionAttributes>.activities.first(where: { $0.id == activityId }) {
                 let headerComponentId = data["headerComponentId"] as? String ?? activity.content.state.headerComponentId
-                let headerProps = data["headerProps"] as? String ?? activity.content.state.headerProps
                 let bodyComponentId = data["bodyComponentId"] as? String ?? activity.content.state.bodyComponentId
-                let bodyProps = data["bodyProps"] as? String ?? activity.content.state.bodyProps
                 let footerComponentId = data["footerComponentId"] as? String ?? activity.content.state.footerComponentId
-                let footerProps = data["footerProps"] as? String ?? activity.content.state.footerProps
+                let compactLeadingComponentId = data["compactLeadingComponentId"] as? String ?? activity.content.state.compactLeadingComponentId
+                let compactTrailingComponentId = data["compactTrailingComponentId"] as? String ?? activity.content.state.compactTrailingComponentId
+                let minimalComponentId = data["minimalComponentId"] as? String ?? activity.content.state.minimalComponentId
                 
                 let contentState = DynamicWidgetExtensionAttributes.ContentState(
                     headerComponentId: headerComponentId,
-                    headerProps: headerProps,
                     bodyComponentId: bodyComponentId,
-                    bodyProps: bodyProps,
                     footerComponentId: footerComponentId,
-                    footerProps: footerProps
+                    compactLeadingComponentId: compactLeadingComponentId,
+                    compactTrailingComponentId: compactTrailingComponentId,
+                    minimalComponentId: minimalComponentId
                 )
                 //let activityContent = ActivityContent(state: contentState, staleDate: nil)
                 
@@ -212,6 +215,9 @@ class RNIsland: RCTEventEmitter {
                 Task {
                     await activity.update(using: contentState)
                 }
+                resolve(activityId)
+            } else {
+                reject("ACTIVITY_NOT_FOUND", "Activity not found", nil)
             }
         }
     }
@@ -251,10 +257,9 @@ class RNIsland: RCTEventEmitter {
         }
     }
 
-    private func debugComponentRendering(componentId: String, props: String) {
+    private func debugComponentRendering(componentId: String) {
         print("=== Debug Component Rendering ===")
         print("Component ID: \(componentId)")
-        print("Props: \(props)")
         
         // Check if component is registered
         if let componentName = ComponentRegistry.shared.getComponentName(id: componentId) {

@@ -10,6 +10,7 @@ import {
 import LiveActivityHeader from './LiveActivityHeader';
 import LiveActivityBody from './LiveActivityBody';
 import LiveActivityFooter from './LiveActivityFooter';
+import LiveActivityCompact from './LiveActivityCompact';
 
 export default function App() {
   // const [isActivityActive, setIsActivityActive] = useState(false);
@@ -17,19 +18,40 @@ export default function App() {
   const [activityList, setActivityList] = useState<string[]>([]);
 
   useEffect(() => {
-    registerComponent('header', 'Header', LiveActivityHeader);
-    registerComponent('body', 'Body', LiveActivityBody);
-    registerComponent('footer', 'Footer', LiveActivityFooter);
+    registerComponent('header', 'Header');
+    registerComponent('body', 'Body');
+    registerComponent('footer', 'Footer');
+    registerComponent('compactLeading', 'CompactLeading');
+    registerComponent('compactTrailing', 'CompactTrailing');
+    registerComponent('minimal', 'Minimal');
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const list = await getIslandList();
+      const activityId = list[0];
+      console.log('activityId', activityId);
+      await updateIslandActivity({
+        id: activityId,
+        compactLeadingComponentId: 'compactLeading',
+        compactTrailingComponentId: 'compactTrailing',
+        minimalComponentId: 'minimal',
+        bodyComponentId: 'body',
+        footerComponentId: 'footer',
+        headerComponentId: 'header',
+      });
+
+      console.log('updated');
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const startActivity = async () => {
     await startIslandActivity({
       headerComponentId: 'header',
-      headerProps: `{ title: 'Hello World' }`,
       bodyComponentId: 'body',
-      bodyProps: `{ title: 'Hello World Body' }`,
       footerComponentId: 'footer',
-      footerProps: `{ title: 'Hello World Footer' }`,
     });
 
     const list = await getIslandList();
@@ -37,11 +59,18 @@ export default function App() {
   };
 
   const updateActivity = async () => {
+    const list = await getIslandList();
+    setActivityList(list);
+
+    const activityId = activityList[0];
     await updateIslandActivity({
+      id: activityId,
       headerComponentId: 'header',
-      headerProps: `{ title: 'Hello World Updated' }`,
       bodyComponentId: 'body',
-      bodyProps: `{ title: 'Hello World Body Updated' }`,
+      footerComponentId: 'footer',
+      compactLeadingComponentId: 'compactLeading',
+      compactTrailingComponentId: 'compactTrailing',
+      minimalComponentId: 'minimal',
     });
   };
 
@@ -79,6 +108,9 @@ export default function App() {
       <LiveActivityHeader title="Hello World Header" />
       <LiveActivityBody title="Hello World Body" />
       <LiveActivityFooter title="Hello World Footer" />
+      <LiveActivityCompact id="compactLeading" />
+      <LiveActivityCompact id="compactTrailing" />
+      <LiveActivityCompact id="minimal" />
 
       <View style={styles.spacer} />
 

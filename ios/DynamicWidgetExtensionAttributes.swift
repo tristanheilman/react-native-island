@@ -3,21 +3,24 @@ import ActivityKit
 struct DynamicWidgetExtensionAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         var headerComponentId: String
-        var headerProps: String
         var bodyComponentId: String
-        var bodyProps: String
         var footerComponentId: String
-        var footerProps: String
+        var compactLeadingComponentId: String
+        var compactTrailingComponentId: String
+        var minimalComponentId: String
         
-        init(headerComponentId: String = "", headerProps: String = "",
-             bodyComponentId: String = "", bodyProps: String = "",
-             footerComponentId: String = "", footerProps: String = "") {
+        init(headerComponentId: String = "",
+             bodyComponentId: String = "",
+             footerComponentId: String = "",
+             compactLeadingComponentId: String = "",
+             compactTrailingComponentId: String = "",
+             minimalComponentId: String = "") {
             self.headerComponentId = headerComponentId
-            self.headerProps = headerProps
             self.bodyComponentId = bodyComponentId
-            self.bodyProps = bodyProps
             self.footerComponentId = footerComponentId
-            self.footerProps = footerProps
+            self.compactLeadingComponentId = compactLeadingComponentId
+            self.compactTrailingComponentId = compactTrailingComponentId
+            self.minimalComponentId = minimalComponentId
         }
     }
 }

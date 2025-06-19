@@ -4,10 +4,10 @@ import ComponentViewWrapper from './ComponentViewWrapper';
 
 export function registerComponent(
   id: string,
-  componentName: string,
-  component: React.ComponentType<any>
+  componentName: string
+  //component: React.ComponentType<any>
 ): void {
-  ComponentRegistry.register(id, component);
+  //ComponentRegistry.register(id, component);
   Island.registerComponent(id, componentName);
 }
 

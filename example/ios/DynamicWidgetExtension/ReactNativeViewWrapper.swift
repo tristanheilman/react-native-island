@@ -9,21 +9,18 @@ import Foundation
 
 public struct ReactNativeViewWrapper: View {
     let componentId: String
-    let props: String
     
-    public init(componentId: String, props: String) {
+    public init(componentId: String) {
         self.componentId = componentId
-        self.props = props
     }
     
     public var body: some View {
-        PreRenderedComponentView(componentId: componentId, props: props)
+        PreRenderedComponentView(componentId: componentId)
     }
 }
 
 private struct PreRenderedComponentView: View {
     let componentId: String
-    let props: String
     
     var body: some View {
         // Read pre-rendered content from App Group storage
@@ -42,9 +39,6 @@ private struct PreRenderedComponentView: View {
             VStack {
                 Text("Component: \(componentId)")
                     .font(.caption)
-                Text("Props: \(props)")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
                 Text("No image data found")
                     .font(.caption2)
                     .foregroundColor(.red)

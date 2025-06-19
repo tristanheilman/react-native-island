@@ -45,6 +45,10 @@ const ComponentViewWrapper: React.FC<ComponentViewWrapperProps> = ({
 
       return () => clearTimeout(timer);
     }
+
+    return () => {
+      console.log(`Component ${componentId} unmounted`);
+    };
   }, [componentId]);
 
   return (

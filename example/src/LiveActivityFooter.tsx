@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { ComponentViewWrapper } from 'react-native-island';
 
@@ -8,11 +9,27 @@ interface LiveActivityFooterProps {
 const LiveActivityFooter = ({ title }: LiveActivityFooterProps) => {
   // parse the props as json
   //const parsedProps = JSON.parse(props);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let curr = 0;
+    const interval = setInterval(() => {
+      setCount(curr);
+      curr++;
+      // updateIslandActivity({
+      //   bodyComponentId: 'body',
+      // });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <ComponentViewWrapper componentId="footer">
       <View style={styles.container}>
-        <Text style={styles.text}>{title}</Text>
+        <Text style={styles.text}>
+          {title}: {count}
+        </Text>
       </View>
     </ComponentViewWrapper>
   );

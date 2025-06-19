@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { ComponentViewWrapper } from 'react-native-island';
 
-interface LiveActivityBodyProps {
-  title: string;
+interface LiveActivityCompactProps {
+  id: string;
 }
 
-const LiveActivityBody = ({ title }: LiveActivityBodyProps) => {
+const LiveActivityCompact = ({ id }: LiveActivityCompactProps) => {
   // parse the props as json
   //const parsedProps = JSON.parse(props);
   const [count, setCount] = useState(0);
@@ -16,26 +16,24 @@ const LiveActivityBody = ({ title }: LiveActivityBodyProps) => {
     const interval = setInterval(() => {
       setCount(curr);
       curr++;
-      // updateIslandActivity({
-      //   bodyComponentId: 'body',
-      // });
+      //   updateIslandActivity({
+      //     bodyComponentId: 'body',
+      //   });
     }, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <ComponentViewWrapper componentId="body">
+    <ComponentViewWrapper componentId={id}>
       <View style={styles.container}>
-        <Text style={styles.text}>
-          {title}: {count}
-        </Text>
+        <Text style={styles.text}>{count}</Text>
       </View>
     </ComponentViewWrapper>
   );
 };
 
-export default LiveActivityBody;
+export default LiveActivityCompact;
 
 const styles = StyleSheet.create({
   container: {
@@ -44,7 +42,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });

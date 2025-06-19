@@ -4,11 +4,10 @@ import { TurboModuleRegistry } from 'react-native';
 // Define specific types for the data structures
 export interface ActivityData {
   headerComponentId?: string;
-  headerProps?: string | null;
   bodyComponentId?: string;
-  bodyProps?: string | null;
   footerComponentId?: string;
-  footerProps?: string | null;
+  compactComponentId?: string;
+  minimalComponentId?: string;
   id?: string;
 }
 

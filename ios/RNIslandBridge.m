@@ -11,15 +11,21 @@ RCT_EXTERN_METHOD(registerComponent:(NSString *)componentId
 RCT_EXTERN_METHOD(getIslandList:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(startIslandActivity:(NSDictionary *)data)
+RCT_EXTERN_METHOD(startIslandActivity:(NSDictionary *)data
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(storeViewReference:(NSString *)componentId
                   nodeHandle:(NSNumber *)nodeHandle
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(updateIslandActivity:(NSDictionary *)data)
+RCT_EXTERN_METHOD(updateIslandActivity:(NSDictionary *)data
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(endIslandActivity)
+RCT_EXTERN_METHOD(endIslandActivity
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 
 @end
