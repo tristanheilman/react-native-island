@@ -29,9 +29,9 @@ struct DynamicHeaderView: View {
     let props: String
     
     var body: some View {
-        Text("Header")
-        // ReactNativeViewWrapper(componentId: componentId, props: props)
-        //     .frame(height: 60)
+        //Text("Header")
+        ReactNativeViewWrapper(componentId: componentId, props: props)
+            .frame(height: 60)
     }
 }
 
@@ -40,9 +40,9 @@ struct DynamicBodyView: View {
     let props: String
 
     var body: some View {
-        Text("Body")
-        // ReactNativeViewWrapper(componentId: componentId, props: props)
-        //     .frame(maxWidth: .infinity, maxHeight: .infinity)
+        //Text("Body")
+        ReactNativeViewWrapper(componentId: componentId, props: props)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -52,8 +52,8 @@ struct DynamicFooterView: View {
     
     var body: some View {
         Text("Footer")
-        // ReactNativeViewWrapper(componentId: componentId, props: props)
-        //     .frame(height: 40)
+        ReactNativeViewWrapper(componentId: componentId, props: props)
+            .frame(height: 40)
     }
 }
 

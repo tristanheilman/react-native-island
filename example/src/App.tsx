@@ -76,6 +76,10 @@ export default function App() {
         <Text style={styles.buttonText}>Get Activities</Text>
       </Pressable>
 
+      <LiveActivityHeader title="Hello World Header" />
+      <LiveActivityBody title="Hello World Body" />
+      <LiveActivityFooter title="Hello World Footer" />
+
       <View style={styles.spacer} />
 
       <Text style={styles.subHeaderText}>Activity List</Text>

@@ -13,6 +13,11 @@ RCT_EXTERN_METHOD(getIslandList:(RCTPromiseResolveBlock)resolve
 
 RCT_EXTERN_METHOD(startIslandActivity:(NSDictionary *)data)
 
+RCT_EXTERN_METHOD(storeViewReference:(NSString *)componentId
+                  nodeHandle:(NSNumber *)nodeHandle
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(updateIslandActivity:(NSDictionary *)data)
 
 RCT_EXTERN_METHOD(endIslandActivity)

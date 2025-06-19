@@ -1,6 +1,6 @@
 import Island, { type ActivityData } from './NativeIsland';
 import ComponentRegistry from './ComponentRegistry';
-import DynamicLiveActivityWrapper from './DynamicLiveActivityWrapper';
+import ComponentViewWrapper from './ComponentViewWrapper';
 
 export function registerComponent(
   id: string,
@@ -36,7 +36,7 @@ export function getAllComponents(): Map<string, React.ComponentType<any>> {
 }
 
 // Export Components
-export { DynamicLiveActivityWrapper };
+export { ComponentViewWrapper };
 
 // Types
 export type { ActivityData };

@@ -22,7 +22,7 @@ private struct PreRenderedComponentView: View {
     
     var body: some View {
         // Read pre-rendered content from App Group storage
-        let userDefaults = UserDefaults(suiteName: "group.your.app.group")
+        let userDefaults = UserDefaults(suiteName: "group.island.example")
         let imageData = userDefaults?.data(forKey: "rendered_\(componentId)")
         
         if let imageData = imageData, let uiImage = UIImage(data: imageData) {
