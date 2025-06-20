@@ -24,8 +24,7 @@ RCT_EXTERN_METHOD(updateIslandActivity:(NSDictionary *)data
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(endIslandActivity
-                  resolver:(RCTPromiseResolveBlock)resolve
+RCT_EXTERN_METHOD(endIslandActivity:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
 @end

@@ -5,12 +5,12 @@ import { NativeModules } from 'react-native';
 
 const { RNIsland } = NativeModules;
 
-interface ComponentViewWrapperProps {
+interface IslandWrapperProps {
   componentId: string;
   children: React.ReactNode;
 }
 
-const ComponentViewWrapper: React.FC<ComponentViewWrapperProps> = ({
+const IslandWrapper: React.FC<IslandWrapperProps> = ({
   componentId,
   children,
 }) => {
@@ -23,22 +23,17 @@ const ComponentViewWrapper: React.FC<ComponentViewWrapperProps> = ({
       const timer = setTimeout(() => {
         const nodeHandle = findNodeHandle(viewRef.current);
         if (nodeHandle) {
-          console.log(
-            `Component ${componentId} rendered with node handle: ${nodeHandle}`
-          );
           RNIsland.storeViewReference(componentId, nodeHandle)
             .then(() => {
-              console.log(
-                `View reference stored for component: ${componentId}`
-              );
               hasStoredRef.current = true;
             })
             .catch((error: any) => {
-              console.error(
-                `Failed to store view reference for ${componentId}:`,
+              hasStoredRef.current = false;
+              // Don't set hasStoredRef to true on error, so we can retry
+              console.log(
+                `❌ Failed to store view reference for ${componentId}:`,
                 error
               );
-              // Don't set hasStoredRef to true on error, so we can retry
             });
         }
       }, 100); // 100ms delay
@@ -58,4 +53,4 @@ const ComponentViewWrapper: React.FC<ComponentViewWrapperProps> = ({
   );
 };
 
-export default ComponentViewWrapper;
+export default IslandWrapper;

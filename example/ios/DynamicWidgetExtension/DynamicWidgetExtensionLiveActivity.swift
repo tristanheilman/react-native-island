@@ -4,72 +4,23 @@ import SwiftUI
 
 struct DynamicWidgetExtensionAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
-        var headerComponentId: String
         var bodyComponentId: String
-        var footerComponentId: String
+        var lockScreenComponentId: String
         var compactLeadingComponentId: String
         var compactTrailingComponentId: String
         var minimalComponentId: String
         
-        init(headerComponentId: String = "",
+        init(lockScreenComponentId: String = "",
              bodyComponentId: String = "",
-             footerComponentId: String = "",
              compactLeadingComponentId: String = "",
              compactTrailingComponentId: String = "",
              minimalComponentId: String = "") {
-            self.headerComponentId = headerComponentId
+            self.lockScreenComponentId = lockScreenComponentId
             self.bodyComponentId = bodyComponentId
-            self.footerComponentId = footerComponentId
             self.compactLeadingComponentId = compactLeadingComponentId
             self.compactTrailingComponentId = compactTrailingComponentId
             self.minimalComponentId = minimalComponentId
         }
-    }
-}
-
-struct DynamicHeaderView: View {
-    let componentId: String
-    
-    var body: some View {
-        //Text("Header")
-        ReactNativeViewWrapper(componentId: componentId)
-            .frame(height: 60)
-    }
-}
-
-struct DynamicBodyView: View {
-    let componentId: String
-
-    var body: some View {
-        ReactNativeViewWrapper(componentId: componentId)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
-struct DynamicFooterView: View {
-    let componentId: String
-    
-    var body: some View {
-        ReactNativeViewWrapper(componentId: componentId)
-            .frame(height: 40)
-    }
-}
-
-struct DynamicCompactView: View {
-    let componentId: String
-    
-    var body: some View {
-        ReactNativeViewWrapper(componentId: componentId)
-            .frame(height: 40)
-    }
-}
-
-struct DynamicMinimalView: View {
-    let componentId: String
-    
-    var body: some View {
-        ReactNativeViewWrapper(componentId: componentId)
-            .frame(height: 40)
     }
 }
 
@@ -79,50 +30,28 @@ struct DynamicWidgetExtensionLiveActivity: Widget {
         ActivityConfiguration(for: DynamicWidgetExtensionAttributes.self) { context in
             // Lock screen/banner UI goes here
             VStack {
-                DynamicHeaderView(
-                    componentId: context.state.headerComponentId
-                )
-                DynamicBodyView(
-                    componentId: context.state.bodyComponentId
-                )
-                DynamicFooterView(
-                    componentId: context.state.footerComponentId
-                )
+                ReactNativeViewWrapper(componentId: context.state.lockScreenComponentId)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .padding()
         } dynamicIsland: { context in
             DynamicIsland {
                 // Expanded UI goes here
-                DynamicIslandExpandedRegion(.leading, priority: 1, content: {
-                    DynamicHeaderView(
-                        componentId: context.state.headerComponentId
-                    )
-                })
-                DynamicIslandExpandedRegion(.trailing, priority: 1, content: {
-                    DynamicFooterView(
-                        componentId: context.state.footerComponentId
-                    )
-                })
-                DynamicIslandExpandedRegion(.center, priority: 1, content: {
-                    DynamicBodyView(
-                        componentId: context.state.bodyComponentId
-                    )
+                DynamicIslandExpandedRegion(.center, priority: 3, content: {
+                    ReactNativeViewWrapper(componentId: context.state.bodyComponentId)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 })
             } compactLeading: {
                 // Compact leading UI
-                DynamicCompactView(
-                    componentId: context.state.compactLeadingComponentId
-                )
+                ReactNativeViewWrapper(componentId: context.state.compactLeadingComponentId)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } compactTrailing: {
                 // Compact trailing UI
-                DynamicCompactView(
-                    componentId: context.state.compactTrailingComponentId
-                )
+                ReactNativeViewWrapper(componentId: context.state.compactTrailingComponentId)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } minimal: {
                 // Minimal UI
-                DynamicMinimalView(
-                    componentId: context.state.bodyComponentId
-                )
+                ReactNativeViewWrapper(componentId: context.state.minimalComponentId)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
     }

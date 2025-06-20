@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, Pressable } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Pressable,
+  ActivityIndicator,
+} from 'react-native';
 import {
   registerComponent,
   startIslandActivity,
@@ -7,110 +13,134 @@ import {
   updateIslandActivity,
   getIslandList,
 } from 'react-native-island';
-import LiveActivityHeader from './LiveActivityHeader';
-import LiveActivityBody from './LiveActivityBody';
-import LiveActivityFooter from './LiveActivityFooter';
-import LiveActivityCompact from './LiveActivityCompact';
+import BBLiveActivityBody from './BaseballExample/BBLiveActivityBody';
+import BBLiveActivityLockScreen from './BaseballExample/BBLiveActivityLockScreen';
+import BBLiveActivityCompact from './BaseballExample/BBLiveActivityCompact';
 
 export default function App() {
   // const [isActivityActive, setIsActivityActive] = useState(false);
   // const [activityId, setActivityId] = useState('');
   const [activityList, setActivityList] = useState<string[]>([]);
+  const [startingActivity, setStartingActivity] = useState(false);
+  const [updatingActivity, setUpdatingActivity] = useState(false);
+  const [endingActivity, setEndingActivity] = useState(false);
+  const [gettingActivities, setGettingActivities] = useState(false);
 
   useEffect(() => {
-    registerComponent('header', 'Header');
-    registerComponent('body', 'Body');
-    registerComponent('footer', 'Footer');
-    registerComponent('compactLeading', 'CompactLeading');
-    registerComponent('compactTrailing', 'CompactTrailing');
-    registerComponent('minimal', 'Minimal');
+    registerComponent('lockScreen', 'BBLiveActivityLockScreen');
+    registerComponent('body', 'BBLiveActivityBody');
+    registerComponent('compactLeading', 'BBLiveActivityCompact');
+    registerComponent('compactTrailing', 'BBLiveActivityCompact');
+    registerComponent('minimal', 'BBLiveActivityCompact');
   }, []);
 
   useEffect(() => {
     const interval = setInterval(async () => {
       const list = await getIslandList();
-      const activityId = list[0];
-      console.log('activityId', activityId);
-      await updateIslandActivity({
-        id: activityId,
-        compactLeadingComponentId: 'compactLeading',
-        compactTrailingComponentId: 'compactTrailing',
-        minimalComponentId: 'minimal',
-        bodyComponentId: 'body',
-        footerComponentId: 'footer',
-        headerComponentId: 'header',
-      });
 
-      console.log('updated');
+      if (list.length > 0) {
+        const activityId = list[0];
+        await updateIslandActivity({
+          id: activityId,
+          compactLeadingComponentId: 'compactLeading',
+          compactTrailingComponentId: 'compactTrailing',
+          minimalComponentId: 'minimal',
+          bodyComponentId: 'body',
+          lockScreenComponentId: 'lockScreen',
+        });
+      } else {
+        console.log('no activity');
+      }
     }, 10000);
 
     return () => clearInterval(interval);
   }, []);
 
   const startActivity = async () => {
-    await startIslandActivity({
-      headerComponentId: 'header',
+    setStartingActivity(true);
+    const activityId = await startIslandActivity({
+      lockScreenComponentId: 'lockScreen',
       bodyComponentId: 'body',
-      footerComponentId: 'footer',
     });
+
+    console.log('New Island Activity ID: ', activityId);
 
     const list = await getIslandList();
     setActivityList(list);
+    setStartingActivity(false);
   };
 
   const updateActivity = async () => {
+    setUpdatingActivity(true);
     const list = await getIslandList();
     setActivityList(list);
 
     const activityId = activityList[0];
-    await updateIslandActivity({
+    const updatedId = await updateIslandActivity({
       id: activityId,
-      headerComponentId: 'header',
+      lockScreenComponentId: 'lockScreen',
       bodyComponentId: 'body',
-      footerComponentId: 'footer',
       compactLeadingComponentId: 'compactLeading',
       compactTrailingComponentId: 'compactTrailing',
       minimalComponentId: 'minimal',
     });
+
+    console.log('Updated Island Activity ID: ', updatedId);
+    setUpdatingActivity(false);
   };
 
   const endActivity = async () => {
+    setEndingActivity(true);
     await endIslandActivity();
-
     const list = await getIslandList();
     setActivityList(list);
+    setEndingActivity(false);
   };
 
   const getActivities = async () => {
+    setGettingActivities(true);
     const list = await getIslandList();
     setActivityList(list);
+    setGettingActivities(false);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>react-native-island Example</Text>
       <Pressable style={styles.button} onPress={startActivity}>
-        <Text style={styles.buttonText}>Start Activity</Text>
+        {startingActivity && <ActivityIndicator size="small" color="white" />}
+        <Text style={styles.buttonText}>
+          {startingActivity ? 'Starting...' : 'Start Activity'}
+        </Text>
       </Pressable>
 
       <Pressable style={styles.button} onPress={updateActivity}>
-        <Text style={styles.buttonText}>Update Activity</Text>
+        {updatingActivity && <ActivityIndicator size="small" color="white" />}
+        <Text style={styles.buttonText}>
+          {updatingActivity ? 'Updating...' : 'Update Activity'}
+        </Text>
       </Pressable>
 
       <Pressable style={styles.button} onPress={endActivity}>
-        <Text style={styles.buttonText}>End Activity</Text>
+        {endingActivity && <ActivityIndicator size="small" color="white" />}
+        <Text style={styles.buttonText}>
+          {endingActivity ? 'Ending...' : 'End Activity'}
+        </Text>
       </Pressable>
 
       <Pressable style={styles.button} onPress={getActivities}>
-        <Text style={styles.buttonText}>Get Activities</Text>
+        {gettingActivities && <ActivityIndicator size="small" color="white" />}
+        <Text style={styles.buttonText}>
+          {gettingActivities ? 'Getting...' : 'Get Activities'}
+        </Text>
       </Pressable>
 
-      <LiveActivityHeader title="Hello World Header" />
-      <LiveActivityBody title="Hello World Body" />
-      <LiveActivityFooter title="Hello World Footer" />
-      <LiveActivityCompact id="compactLeading" />
-      <LiveActivityCompact id="compactTrailing" />
-      <LiveActivityCompact id="minimal" />
+      <View style={styles.spacer} />
+      <BBLiveActivityLockScreen />
+      <BBLiveActivityBody />
+      <BBLiveActivityCompact id="compactLeading" />
+      <BBLiveActivityCompact id="compactTrailing" />
+      <BBLiveActivityCompact id="minimal" />
 
       <View style={styles.spacer} />
 
@@ -142,6 +172,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     backgroundColor: '#CD8987',
     borderRadius: 5,
+    flexDirection: 'row',
+    gap: 10,
   },
   buttonText: {
     color: 'white',

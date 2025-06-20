@@ -14,9 +14,10 @@ export interface ActivityData {
 export interface Spec extends TurboModule {
   registerComponent(id: string, componentName: string): Promise<void>;
   getIslandList(): Promise<string[]>;
-  startIslandActivity(data: ActivityData): void;
-  updateIslandActivity(data: ActivityData): void;
-  endIslandActivity(): void;
+  startIslandActivity(data: ActivityData): Promise<void>;
+  updateIslandActivity(data: ActivityData): Promise<void>;
+  endIslandActivity(): Promise<void>;
+  storeViewReference(componentId: string, nodeHandle: number): Promise<void>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('RNIsland');

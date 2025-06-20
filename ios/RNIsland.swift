@@ -39,7 +39,7 @@ class RNIsland: RCTEventEmitter {
     func registerComponent(_ componentId: String, componentName: String, resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
         // Store the component name mapping
         ComponentRegistry.shared.registerComponent(id: componentId, componentName: componentName)
-        print("Registered component: \(componentId) -> \(componentName)")
+        print("✅ Registered component: \(componentId) -> \(componentName)")
         resolve(componentId)
     }
 
@@ -52,9 +52,8 @@ class RNIsland: RCTEventEmitter {
             // Start the activity after a delay to allow pre-rendering
             DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
                 let attributes = DynamicWidgetExtensionAttributes.ContentState(
-                    headerComponentId: data["headerComponentId"] as? String ?? "",
+                    lockScreenComponentId: data["lockScreenComponentId"] as? String ?? "",
                     bodyComponentId: data["bodyComponentId"] as? String ?? "",
-                    footerComponentId: data["footerComponentId"] as? String ?? "",
                     compactLeadingComponentId: data["compactLeadingComponentId"] as? String ?? "",
                     compactTrailingComponentId: data["compactTrailingComponentId"] as? String ?? "",
                     minimalComponentId: data["minimalComponentId"] as? String ?? ""
@@ -65,10 +64,10 @@ class RNIsland: RCTEventEmitter {
                         attributes: DynamicWidgetExtensionAttributes(),
                         contentState: attributes
                     )
-                    print("Activity started with ID: \(activity.id)")
+                    print("✅ Activity started with ID: \(activity.id)")
                     resolve(activity.id)
                 } catch {
-                    print("Error starting activity: \(error)")
+                    print("❌ Error starting activity: \(error)")
                     reject("ACTIVITY_START_ERROR", "Error starting activity", error)
                 }
             }
@@ -80,13 +79,15 @@ class RNIsland: RCTEventEmitter {
         
         DispatchQueue.main.async {
             // First, try to get an existing rendered view
+            print("Pre-rendering \(componentId) component...")
             if let existingView = ComponentRegistry.shared.getViewReference(id: componentId) {
-                print("Found existing view for component: \(componentId)")
+                print("✅ Found existing view for component: \(componentId)")
                 self.captureViewImage(existingView, componentId: componentId)
             } else {
-                print("No existing view found for component: \(componentId), creating new one")
+                print("❌ No existing view found for component: \(componentId), creating new one")
                 self.createAndRenderComponent(componentId: componentId)
             }
+            print("================================")
         }
     }
 
@@ -102,7 +103,7 @@ class RNIsland: RCTEventEmitter {
         
         // Convert to PNG data
         guard let imageData = image.pngData() else {
-            print("Error: Failed to convert image to data for component: \(componentId)")
+            print("❌ Failed to convert image to data for component: \(componentId)")
             return
         }
         
@@ -111,13 +112,13 @@ class RNIsland: RCTEventEmitter {
         userDefaults?.set(imageData, forKey: "rendered_\(componentId)")
         userDefaults?.synchronize()
         
-        print("Successfully captured existing view for component: \(componentId) with size: \(image.size)")
+        print("✅ Successfully captured existing view for component: \(componentId) with size: \(image.size)")
     }
 
     private func createAndRenderComponent(componentId: String) {
         // Fallback to creating a new view (your existing implementation)
         guard let bridge = RCTBridge.current() else {
-            print("Error: No React Native bridge available")
+            print("❌ No React Native bridge available")
             return
         }
         
@@ -152,7 +153,7 @@ class RNIsland: RCTEventEmitter {
             
             // Convert to PNG data
             guard let imageData = image.pngData() else {
-                print("Error: Failed to convert image to data for component: \(componentId)")
+                print("❌ Failed to convert image to data for component: \(componentId)")
                 return
             }
             
@@ -161,7 +162,7 @@ class RNIsland: RCTEventEmitter {
             userDefaults?.set(imageData, forKey: "rendered_\(componentId)")
             userDefaults?.synchronize()
             
-            print("Successfully pre-rendered component: \(componentId) with size: \(image.size)")
+            print("✅ Successfully pre-rendered component: \(componentId) with size: \(image.size)")
             
             // Clean up
             tempWindow.isHidden = true
@@ -170,11 +171,10 @@ class RNIsland: RCTEventEmitter {
     }
 
     private func handlePrerendering(data: [String: String]) {
-        let components = ["header", "body", "footer", "compactTrailing", "compactLeading", "minimal"]
+        let components = ["lockScreen", "body", "compactTrailing", "compactLeading", "minimal"]
             
         for id in components {
-            print("Pre-rendering \(id) component...")
-            debugComponentRendering(componentId: id)
+            //debugComponentRendering(componentId: id)
             preRenderComponent(componentId: id)
         }
         
@@ -185,7 +185,7 @@ class RNIsland: RCTEventEmitter {
     func updateIslandActivity(_ data: [String: String], resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
         if areActivitiesEnabled() {
             guard let activityId = data["id"] as? String else {
-                print("Error: Activity ID is required for update")
+                print("❌ Activity ID is required for update")
                 reject("ACTIVITY_ID_REQUIRED", "Activity ID is required for update", nil)
                 return
             }
@@ -194,17 +194,15 @@ class RNIsland: RCTEventEmitter {
             
             // Find the activity by ID
             if let activity = Activity<DynamicWidgetExtensionAttributes>.activities.first(where: { $0.id == activityId }) {
-                let headerComponentId = data["headerComponentId"] as? String ?? activity.content.state.headerComponentId
+                let lockScreenComponentId = data["lockScreenComponentId"] as? String ?? activity.content.state.lockScreenComponentId
                 let bodyComponentId = data["bodyComponentId"] as? String ?? activity.content.state.bodyComponentId
-                let footerComponentId = data["footerComponentId"] as? String ?? activity.content.state.footerComponentId
                 let compactLeadingComponentId = data["compactLeadingComponentId"] as? String ?? activity.content.state.compactLeadingComponentId
                 let compactTrailingComponentId = data["compactTrailingComponentId"] as? String ?? activity.content.state.compactTrailingComponentId
                 let minimalComponentId = data["minimalComponentId"] as? String ?? activity.content.state.minimalComponentId
                 
                 let contentState = DynamicWidgetExtensionAttributes.ContentState(
-                    headerComponentId: headerComponentId,
+                    lockScreenComponentId: lockScreenComponentId,
                     bodyComponentId: bodyComponentId,
-                    footerComponentId: footerComponentId,
                     compactLeadingComponentId: compactLeadingComponentId,
                     compactTrailingComponentId: compactTrailingComponentId,
                     minimalComponentId: minimalComponentId
@@ -224,14 +222,19 @@ class RNIsland: RCTEventEmitter {
 
     @objc
     @available(iOS 16.2, *)
-    func endIslandActivity() {
+    func endIslandActivity(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
         if areActivitiesEnabled() {
             let activities = Activity<DynamicWidgetExtensionAttributes>.activities
             for activity in activities {
                 Task {
+                    print("Ending activity: \(activity.id)")
                     await activity.end(dismissalPolicy: .immediate)
+                    print("✅ Activity ended: \(activity.id)")
                 }
             }
+            resolve(true)
+        } else {
+            reject("ACTIVITY_DISABLED", "Activities are disabled", nil)
         }
     }
 
@@ -241,7 +244,7 @@ class RNIsland: RCTEventEmitter {
             // Find the view by node handle
             if let view = self.bridge?.uiManager.view(forReactTag: nodeHandle) {
                 ComponentRegistry.shared.storeViewReference(id: componentId, view: view)
-                print("Stored view reference for component: \(componentId)")
+                print("✅ Stored view reference for component: \(componentId)")
                 resolve(componentId)
             } else {
                 reject("VIEW_NOT_FOUND", "Could not find view for node handle: \(nodeHandle)", nil)
@@ -273,20 +276,6 @@ class RNIsland: RCTEventEmitter {
             print("✅ React Native bridge available")
         } else {
             print("❌ React Native bridge NOT available")
-        }
-
-        // Check if bridge is valid
-        if bridge.isValid {
-            print("✅ Bridge is valid")
-        } else {
-            print("❌ Bridge is NOT valid")
-        }
-
-        // Check if bridge is loaded
-        if !bridge.isLoading {
-            print("✅ Bridge is loaded")
-        } else {
-            print("❌ Bridge is NOT loaded")
         }
         
         // Check App Group access
