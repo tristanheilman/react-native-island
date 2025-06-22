@@ -1,14 +1,12 @@
 import Island, { type ActivityData } from './NativeIsland';
-import ComponentRegistry from './ComponentRegistry';
 import IslandWrapper from './IslandWrapper';
 
-export function registerComponent(
-  id: string,
-  componentName: string
-  //component: React.ComponentType<any>
-): void {
-  //ComponentRegistry.register(id, component);
+export function registerComponent(id: string, componentName: string): void {
   Island.registerComponent(id, componentName);
+}
+
+export function setAppGroup(appGroup: string): Promise<void> {
+  return Island.setAppGroup(appGroup);
 }
 
 export function getIslandList(): Promise<string[]> {
@@ -32,14 +30,6 @@ export function storeViewReference(
   nodeHandle: number
 ): Promise<void> {
   return Island.storeViewReference(componentId, nodeHandle);
-}
-
-export function getComponent(id: string): React.ComponentType<any> | undefined {
-  return ComponentRegistry.get(id);
-}
-
-export function getAllComponents(): Map<string, React.ComponentType<any>> {
-  return ComponentRegistry.getAll();
 }
 
 // Export Components

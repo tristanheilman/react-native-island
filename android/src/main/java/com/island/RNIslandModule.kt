@@ -12,6 +12,11 @@ class RNIslandModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
+  fun setAppGroup(appGroup: String) {
+    println("setAppGroup: $appGroup")
+  }
+
+  @ReactMethod
   fun getIslandList(callback: (List<String>) -> Unit) {
     callback.invoke(listOf("Island 1", "Island 2", "Island 3"))
   }

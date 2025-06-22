@@ -12,6 +12,7 @@ import {
   endIslandActivity,
   updateIslandActivity,
   getIslandList,
+  setAppGroup,
 } from 'react-native-island';
 import BBLiveActivityBody from './BaseballExample/BBLiveActivityBody';
 import BBLiveActivityLockScreen from './BaseballExample/BBLiveActivityLockScreen';
@@ -27,6 +28,7 @@ export default function App() {
   const [gettingActivities, setGettingActivities] = useState(false);
 
   useEffect(() => {
+    setAppGroup('group.island.example');
     registerComponent('lockScreen', 'BBLiveActivityLockScreen');
     registerComponent('body', 'BBLiveActivityBody');
     registerComponent('compactLeading', 'BBLiveActivityCompact');

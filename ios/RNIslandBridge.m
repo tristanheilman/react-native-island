@@ -3,6 +3,10 @@
 
 @interface RCT_EXTERN_MODULE(RNIsland, RCTEventEmitter)
 
+RCT_EXTERN_METHOD(setAppGroup:(NSString *)appGroup
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(registerComponent:(NSString *)componentId
                   componentName:(NSString *)componentName
                   resolver:(RCTPromiseResolveBlock)resolve

@@ -12,6 +12,7 @@ export interface ActivityData {
 }
 
 export interface Spec extends TurboModule {
+  setAppGroup(appGroup: string): Promise<void>;
   registerComponent(id: string, componentName: string): Promise<void>;
   getIslandList(): Promise<string[]>;
   startIslandActivity(data: ActivityData): Promise<void>;

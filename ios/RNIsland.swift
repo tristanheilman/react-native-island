@@ -6,6 +6,8 @@ import ActivityKit
 
 @objc(RNIsland)
 class RNIsland: RCTEventEmitter {
+    var appGroup: String?
+
     override func supportedEvents() -> [String]! {
         return []
     }
@@ -19,6 +21,13 @@ class RNIsland: RCTEventEmitter {
     func getConstants() -> [String: Any]! {
         return [:]
     }
+
+    @objc
+    func setAppGroup(_ appGroup: String, resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+        self.appGroup = appGroup
+        resolve(true)
+    }
+
 
     @objc
     @available(iOS 16.1, *)
@@ -108,7 +117,7 @@ class RNIsland: RCTEventEmitter {
         }
         
         // Save to App Group storage
-        let userDefaults = UserDefaults(suiteName: "group.island.example")
+        let userDefaults = UserDefaults(suiteName: self.appGroup)
         userDefaults?.set(imageData, forKey: "rendered_\(componentId)")
         userDefaults?.synchronize()
         
@@ -158,7 +167,7 @@ class RNIsland: RCTEventEmitter {
             }
             
             // Save to App Group storage
-            let userDefaults = UserDefaults(suiteName: "group.island.example")
+            let userDefaults = UserDefaults(suiteName: self.appGroup)
             userDefaults?.set(imageData, forKey: "rendered_\(componentId)")
             userDefaults?.synchronize()
             
@@ -279,7 +288,7 @@ class RNIsland: RCTEventEmitter {
         }
         
         // Check App Group access
-        let userDefaults = UserDefaults(suiteName: "group.island.example")
+        let userDefaults = UserDefaults(suiteName: self.appGroup)
         if userDefaults != nil {
             print("✅ App Group access available")
         } else {
@@ -287,5 +296,27 @@ class RNIsland: RCTEventEmitter {
         }
         
         print("================================")
+    }
+}
+
+struct DynamicWidgetExtensionAttributes: ActivityAttributes {
+    public struct ContentState: Codable, Hashable {
+        var bodyComponentId: String
+        var lockScreenComponentId: String
+        var compactLeadingComponentId: String
+        var compactTrailingComponentId: String
+        var minimalComponentId: String
+        
+        init(lockScreenComponentId: String = "",
+             bodyComponentId: String = "",
+             compactLeadingComponentId: String = "",
+             compactTrailingComponentId: String = "",
+             minimalComponentId: String = "") {
+            self.lockScreenComponentId = lockScreenComponentId
+            self.bodyComponentId = bodyComponentId
+            self.compactLeadingComponentId = compactLeadingComponentId
+            self.compactTrailingComponentId = compactTrailingComponentId
+            self.minimalComponentId = minimalComponentId
+        }
     }
 }
