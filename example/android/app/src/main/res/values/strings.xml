@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">IslandExample</string>
+    <string name="bubble_image">bubble_image</string>
+    <string name="wridz_icon">wridz_icon</string>
+    <string name="path_icon">path_icon</string>
+    <string name="return_to_app">Return to app</string>
 </resources>
