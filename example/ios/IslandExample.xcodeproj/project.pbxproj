@@ -10,6 +10,10 @@
 		0C80B921A6F3F58F76C31292 /* libPods-IslandExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-IslandExample.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		655CD0F35AF6A3B5412757BC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		67899F3C2E0BAB17008654BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 67899F362E0BAB17008654BD /* Assets.xcassets */; };
+		67899F3E2E0BAB17008654BD /* DynamicWidgetExtensionBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67899F372E0BAB17008654BD /* DynamicWidgetExtensionBundle.swift */; };
+		67899F3F2E0BAB17008654BD /* DynamicWidgetExtensionLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67899F382E0BAB17008654BD /* DynamicWidgetExtensionLiveActivity.swift */; };
+		67899F402E0BAB17008654BD /* ReactNativeViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67899F3A2E0BAB17008654BD /* ReactNativeViewWrapper.swift */; };
 		6789E6252E038A5B00E3714A /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F78C0D2E03641B00DBB8CD /* WidgetKit.framework */; };
 		6789E6262E038A5B00E3714A /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F78C0F2E03641B00DBB8CD /* SwiftUI.framework */; };
 		6789E6332E038A5C00E3714A /* DynamicWidgetExtensionExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6789E6242E038A5B00E3714A /* DynamicWidgetExtensionExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -49,34 +53,20 @@
 		3B4392A12AC88292D35C810B /* Pods-IslandExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IslandExample.debug.xcconfig"; path = "Target Support Files/Pods-IslandExample/Pods-IslandExample.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-IslandExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IslandExample.release.xcconfig"; path = "Target Support Files/Pods-IslandExample/Pods-IslandExample.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-IslandExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-IslandExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		67899F362E0BAB17008654BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		67899F372E0BAB17008654BD /* DynamicWidgetExtensionBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicWidgetExtensionBundle.swift; sourceTree = "<group>"; };
+		67899F382E0BAB17008654BD /* DynamicWidgetExtensionLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicWidgetExtensionLiveActivity.swift; sourceTree = "<group>"; };
+		67899F392E0BAB17008654BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		67899F3A2E0BAB17008654BD /* ReactNativeViewWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactNativeViewWrapper.swift; sourceTree = "<group>"; };
 		6789E6242E038A5B00E3714A /* DynamicWidgetExtensionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DynamicWidgetExtensionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		67DE82D22E03CC8900482905 /* IslandExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = IslandExample.entitlements; path = IslandExample/IslandExample.entitlements; sourceTree = "<group>"; };
+		67DE82D32E03CC9200482905 /* DynamicWidgetExtensionExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DynamicWidgetExtensionExtension.entitlements; sourceTree = "<group>"; };
 		67F78C0D2E03641B00DBB8CD /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		67F78C0F2E03641B00DBB8CD /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = IslandExample/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = IslandExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		6789E6362E038A5C00E3714A /* Exceptions for "DynamicWidgetExtension" folder in "DynamicWidgetExtensionExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 6789E6232E038A5B00E3714A /* DynamicWidgetExtensionExtension */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		6789E6272E038A5B00E3714A /* DynamicWidgetExtension */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				6789E6362E038A5C00E3714A /* Exceptions for "DynamicWidgetExtension" folder in "DynamicWidgetExtensionExtension" target */,
-			);
-			path = DynamicWidgetExtension;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
@@ -102,6 +92,7 @@
 		13B07FAE1A68108700A75B9A /* IslandExample */ = {
 			isa = PBXGroup;
 			children = (
+				67DE82D22E03CC8900482905 /* IslandExample.entitlements */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -122,6 +113,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		67899F3B2E0BAB17008654BD /* DynamicWidgetExtension */ = {
+			isa = PBXGroup;
+			children = (
+				67899F362E0BAB17008654BD /* Assets.xcassets */,
+				67899F372E0BAB17008654BD /* DynamicWidgetExtensionBundle.swift */,
+				67899F382E0BAB17008654BD /* DynamicWidgetExtensionLiveActivity.swift */,
+				67899F392E0BAB17008654BD /* Info.plist */,
+				67899F3A2E0BAB17008654BD /* ReactNativeViewWrapper.swift */,
+			);
+			path = DynamicWidgetExtension;
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -132,9 +135,10 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				67DE82D32E03CC9200482905 /* DynamicWidgetExtensionExtension.entitlements */,
 				13B07FAE1A68108700A75B9A /* IslandExample */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				6789E6272E038A5B00E3714A /* DynamicWidgetExtension */,
+				67899F3B2E0BAB17008654BD /* DynamicWidgetExtension */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
@@ -200,9 +204,6 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				6789E6272E038A5B00E3714A /* DynamicWidgetExtension */,
-			);
 			name = DynamicWidgetExtensionExtension;
 			productName = DynamicWidgetExtensionExtension;
 			productReference = 6789E6242E038A5B00E3714A /* DynamicWidgetExtensionExtension.appex */;
@@ -259,6 +260,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				67899F3C2E0BAB17008654BD /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -352,6 +354,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				67899F3E2E0BAB17008654BD /* DynamicWidgetExtensionBundle.swift in Sources */,
+				67899F3F2E0BAB17008654BD /* DynamicWidgetExtensionLiveActivity.swift in Sources */,
+				67899F402E0BAB17008654BD /* ReactNativeViewWrapper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,6 +377,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = IslandExample/IslandExample.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2X83WXFY9L;
 				ENABLE_BITCODE = NO;
@@ -401,6 +407,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = IslandExample/IslandExample.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2X83WXFY9L;
 				INFOPLIST_FILE = IslandExample/Info.plist;
@@ -434,6 +441,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = DynamicWidgetExtensionExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -477,6 +485,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = DynamicWidgetExtensionExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -576,10 +585,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -648,10 +654,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

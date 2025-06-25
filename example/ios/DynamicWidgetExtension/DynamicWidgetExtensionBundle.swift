@@ -11,7 +11,6 @@ import SwiftUI
 @main
 struct DynamicWidgetExtensionBundle: WidgetBundle {
     var body: some Widget {
-        DynamicWidgetExtension()
         DynamicWidgetExtensionLiveActivity()
     }
 }

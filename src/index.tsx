@@ -1,42 +1,39 @@
 import Island, { type ActivityData } from './NativeIsland';
-import ComponentRegistry from './ComponentRegistry';
-import DynamicLiveActivityWrapper from './DynamicLiveActivityWrapper';
+import IslandWrapper from './IslandWrapper';
 
-export function registerComponent(
-  id: string,
-  componentName: string,
-  component: React.ComponentType<any>
-): void {
-  ComponentRegistry.register(id, component);
+export function registerComponent(id: string, componentName: string): void {
   Island.registerComponent(id, componentName);
+}
+
+export function setAppGroup(appGroup: string): Promise<void> {
+  return Island.setAppGroup(appGroup);
 }
 
 export function getIslandList(): Promise<string[]> {
   return Island.getIslandList();
 }
 
-export function startIslandActivity(data: any): void {
-  Island.startIslandActivity(data);
+export function startIslandActivity(data: any): Promise<void> {
+  return Island.startIslandActivity(data);
 }
 
-export function updateIslandActivity(data: any): void {
-  Island.updateIslandActivity(data);
+export function updateIslandActivity(data: any): Promise<void> {
+  return Island.updateIslandActivity(data);
 }
 
-export function endIslandActivity(): void {
-  Island.endIslandActivity();
+export function endIslandActivity(): Promise<void> {
+  return Island.endIslandActivity();
 }
 
-export function getComponent(id: string): React.ComponentType<any> | undefined {
-  return ComponentRegistry.get(id);
-}
-
-export function getAllComponents(): Map<string, React.ComponentType<any>> {
-  return ComponentRegistry.getAll();
+export function storeViewReference(
+  componentId: string,
+  nodeHandle: number
+): Promise<void> {
+  return Island.storeViewReference(componentId, nodeHandle);
 }
 
 // Export Components
-export { DynamicLiveActivityWrapper };
+export { IslandWrapper };
 
 // Types
 export type { ActivityData };
