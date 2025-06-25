@@ -15,8 +15,8 @@ import {
   // setAppGroup,
 } from 'react-native-island';
 import BBLiveActivityBody from './BaseballExample/BBLiveActivityBody';
-import BBLiveActivityLockScreen from './BaseballExample/BBLiveActivityLockScreen';
-import BBLiveActivityCompact from './BaseballExample/BBLiveActivityCompact';
+// import BBLiveActivityLockScreen from './BaseballExample/BBLiveActivityLockScreen';
+// import BBLiveActivityCompact from './BaseballExample/BBLiveActivityCompact';
 
 export default function App() {
   // const [isActivityActive, setIsActivityActive] = useState(false);

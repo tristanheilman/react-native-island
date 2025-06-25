@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { View, findNodeHandle } from 'react-native';
+import { View, findNodeHandle, StyleSheet } from 'react-native';
 import { NativeModules } from 'react-native';
 
 const { RNIsland } = NativeModules;
@@ -9,10 +9,7 @@ interface IslandWrapperProps {
   children: React.ReactNode;
 }
 
-const IslandWrapper: React.FC<IslandWrapperProps> = ({
-  componentId,
-  children,
-}) => {
+const IslandWrapper = ({ componentId, children }: IslandWrapperProps) => {
   const viewRef = useRef<View>(null);
   const hasStoredRef = useRef(false);
   const [nodeHandle, setNodeHandle] = useState<number | null>(null);
@@ -53,15 +50,7 @@ const IslandWrapper: React.FC<IslandWrapperProps> = ({
       collapsable={false}
       testID={nodeHandle ? nodeHandle.toString() : undefined}
       pointerEvents="box-none" // Allow touches to pass through
-      style={{
-        // Make the wrapper completely transparent to layout
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'transparent',
-      }}
+      style={styles.container}
     >
       {children}
     </View>
@@ -69,3 +58,14 @@ const IslandWrapper: React.FC<IslandWrapperProps> = ({
 };
 
 export default IslandWrapper;
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'transparent',
+  },
+});

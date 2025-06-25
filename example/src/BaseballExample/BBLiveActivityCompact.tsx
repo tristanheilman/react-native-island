@@ -28,7 +28,7 @@ const BBLiveActivityCompact = ({ id }: BBLiveActivityCompactProps) => {
     <IslandWrapper componentId={id}>
       <View style={styles.container}>
         <Text style={styles.headerText}>KC</Text>
-        <Text style={styles.scoreText}>7</Text>
+        <Text style={styles.scoreText}>{count}</Text>
       </View>
     </IslandWrapper>
   );
