@@ -1,6 +1,5 @@
-import React, { useRef, useEffect } from 'react';
-import { View } from 'react-native';
-import { findNodeHandle } from 'react-native';
+import React, { useRef, useEffect, useState } from 'react';
+import { View, findNodeHandle } from 'react-native';
 import { NativeModules } from 'react-native';
 
 const { RNIsland } = NativeModules;
@@ -16,27 +15,29 @@ const IslandWrapper: React.FC<IslandWrapperProps> = ({
 }) => {
   const viewRef = useRef<View>(null);
   const hasStoredRef = useRef(false);
+  const [nodeHandle, setNodeHandle] = useState<number | null>(null);
 
   useEffect(() => {
     if (viewRef.current && !hasStoredRef.current) {
-      // Add a delay to ensure the view is fully created in the native layer
       const timer = setTimeout(() => {
-        const nodeHandle = findNodeHandle(viewRef.current);
-        if (nodeHandle) {
-          RNIsland.storeViewReference(componentId, nodeHandle)
+        const handle = findNodeHandle(viewRef.current);
+        if (handle) {
+          setNodeHandle(handle);
+          // Set the native tag property on the view
+          // @ts-ignore
+          RNIsland.storeViewReference(componentId, handle)
             .then(() => {
               hasStoredRef.current = true;
             })
             .catch((error: any) => {
               hasStoredRef.current = false;
-              // Don't set hasStoredRef to true on error, so we can retry
               console.log(
                 `❌ Failed to store view reference for ${componentId}:`,
                 error
               );
             });
         }
-      }, 100); // 100ms delay
+      }, 100);
 
       return () => clearTimeout(timer);
     }
@@ -47,7 +48,21 @@ const IslandWrapper: React.FC<IslandWrapperProps> = ({
   }, [componentId]);
 
   return (
-    <View ref={viewRef} collapsable={false}>
+    <View
+      ref={viewRef}
+      collapsable={false}
+      testID={nodeHandle ? nodeHandle.toString() : undefined}
+      pointerEvents="box-none" // Allow touches to pass through
+      style={{
+        // Make the wrapper completely transparent to layout
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'transparent',
+      }}
+    >
       {children}
     </View>
   );

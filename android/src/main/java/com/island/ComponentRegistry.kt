@@ -7,6 +7,7 @@ import android.view.View
 class ComponentRegistry private constructor() {
     private val components: MutableMap<String, String> = mutableMapOf() // componentId -> componentName mapping
     private val viewReferences: MutableMap<String, WeakReference<View>> = mutableMapOf() // componentId -> view reference
+    private val nodeHandles: MutableMap<String, Int> = mutableMapOf() // componentId -> nodeHandle
 
     fun registerComponent(id: String, componentName: String) {
         components[id] = componentName
@@ -32,9 +33,21 @@ class ComponentRegistry private constructor() {
         return viewReferences[id]?.get()
     }
 
+    // Store nodeHandle for a component
+    fun storeNodeHandle(id: String, nodeHandle: Int) {
+        nodeHandles[id] = nodeHandle
+        Log.d("ComponentRegistry", "Stored nodeHandle for: $id -> $nodeHandle")
+    }
+
+    // Get the stored nodeHandle
+    fun getNodeHandle(id: String): Int? {
+        return nodeHandles[id]
+    }
+
     fun clearComponent(id: String) {
         components.remove(id)
         viewReferences.remove(id)
+        nodeHandles.remove(id)
         Log.d("ComponentRegistry", "Cleared component: $id")
     }
 

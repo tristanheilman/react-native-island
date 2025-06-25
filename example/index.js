@@ -9,4 +9,4 @@ AppRegistry.registerComponent(
   'DynamicLiveActivity',
   () => DynamicLiveActivityWrapper
 );
-AppRegistry.registerComponent('BubbleContent', () => BaseballExampleBody);
+AppRegistry.registerComponent('body', () => BaseballExampleBody);

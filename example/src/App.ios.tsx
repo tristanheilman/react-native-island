@@ -37,23 +37,23 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    // const interval = setInterval(async () => {
-    //   const list = await getIslandList();
-    //   if (list.length > 0) {
-    //     const activityId = list[0];
-    //     await updateIslandActivity({
-    //       id: activityId,
-    //       compactLeadingComponentId: 'compactLeading',
-    //       compactTrailingComponentId: 'compactTrailing',
-    //       minimalComponentId: 'minimal',
-    //       bodyComponentId: 'BubbleContent',
-    //       lockScreenComponentId: 'lockScreen',
-    //     });
-    //   } else {
-    //     console.log('no activity');
-    //   }
-    // }, 10000);
-    // return () => clearInterval(interval);
+    const interval = setInterval(async () => {
+      const list = await getIslandList();
+      if (list.length > 0) {
+        const activityId = list[0];
+        await updateIslandActivity({
+          id: activityId,
+          compactLeadingComponentId: 'compactLeading',
+          compactTrailingComponentId: 'compactTrailing',
+          minimalComponentId: 'minimal',
+          bodyComponentId: 'BubbleContent',
+          lockScreenComponentId: 'lockScreen',
+        });
+      } else {
+        console.log('no activity');
+      }
+    }, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const startActivity = async () => {
