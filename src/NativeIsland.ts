@@ -19,6 +19,7 @@ export interface Spec extends TurboModule {
   updateIslandActivity(data: ActivityData): Promise<void>;
   endIslandActivity(): Promise<void>;
   storeViewReference(componentId: string, nodeHandle: number): Promise<void>;
+  clearViewReference(componentId: string): Promise<void>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('RNIsland');

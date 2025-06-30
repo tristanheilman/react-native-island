@@ -32,6 +32,10 @@ export function storeViewReference(
   return Island.storeViewReference(componentId, nodeHandle);
 }
 
+export function clearViewReference(componentId: string): Promise<void> {
+  return Island.clearViewReference(componentId);
+}
+
 // Export Components
 export { IslandWrapper };
 

@@ -58,6 +58,7 @@ AR object capture session for React Native using Apple's Object Capture API. Thi
 | `updateIslandActivity` | ActivityData | Updates the island activity with refreshed components |
 | `endIslandActivity` | None | Ends all island activities current active |
 | `storeViewReference` | {componentId: string, nodeHandle: number} | Stores a view reference with link to node |
+| `clearViewReference` | componentId: string | Clears a view reference that is linked with the Island Module |
 
 ## Components
 

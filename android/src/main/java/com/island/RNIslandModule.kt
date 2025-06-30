@@ -436,48 +436,50 @@ class RNIslandModule(reactContext: ReactApplicationContext) :
   private fun expandBubble() {
     try {
       val notificationLayout = bubbleView.findViewById<android.widget.LinearLayout>(R.id.notification_layout)
-
+  
       if (notificationLayout != null) {
         notificationLayout.removeAllViews()
-
+  
         // Get the component ID
         val componentId = "body" // or get from stored data
-
+  
         // Check if we have a captured image (like iOS widget extension)
         val bitmap = componentImages[componentId]
         if (bitmap != null) {
           // Create an ImageView with the captured content
           val imageView = android.widget.ImageView(reactApplicationContext).apply {
             setImageBitmap(bitmap)
-            scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
+            scaleType = android.widget.ImageView.ScaleType.FIT_XY // Changed from FIT_CENTER
+            
+            // Set exact dimensions to match the captured component
             layoutParams = ViewGroup.LayoutParams(
-              ViewGroup.LayoutParams.MATCH_PARENT,
-              ViewGroup.LayoutParams.WRAP_CONTENT
+              bitmap.width,  // Use exact bitmap width
+              bitmap.height  // Use exact bitmap height
             )
           }
           notificationLayout.addView(imageView)
-          println("✅ Captured image added to notification layout")
+          println("✅ Captured image added to notification layout with exact dimensions: ${bitmap.width}x${bitmap.height}")
         } else {
-          // Fallback to text
+          // Fallback to text with fixed dimensions
           val fallbackView = android.widget.TextView(reactApplicationContext).apply {
             text = "Component: $componentId\nTap to minimize"
             setTextColor(android.graphics.Color.WHITE)
             setBackgroundColor(android.graphics.Color.BLUE)
             setPadding(20, 20, 20, 20)
             layoutParams = ViewGroup.LayoutParams(
-              ViewGroup.LayoutParams.MATCH_PARENT,
-              ViewGroup.LayoutParams.WRAP_CONTENT
+              300, // Fixed width
+              150  // Fixed height
             )
           }
           notificationLayout.addView(fallbackView)
           println("✅ Fallback view added to notification layout")
         }
-
+  
         notificationLayout.visibility = android.view.View.VISIBLE
         isExpanded = true
-        println("✅ Bubble expanded - showing captured content")
+        println("✅ Bubble expanded - showing captured content with exact dimensions")
       }
-
+  
     } catch (e: Exception) {
       println("❌ Error expanding bubble: ${e.message}")
       e.printStackTrace()
@@ -617,16 +619,16 @@ class RNIslandModule(reactContext: ReactApplicationContext) :
           }
 
           // Clear component registry
-          try {
-            if (::componentRegistry.isInitialized) {
-              componentRegistry.getAllComponents().keys.forEach { id ->
-                componentRegistry.clearComponent(id)
-              }
-              println("✅ Component registry cleared")
-            }
-          } catch (e: Exception) {
-            println("⚠️ Error clearing component registry: ${e.message}")
-          }
+          // try {
+          //   if (::componentRegistry.isInitialized) {
+          //     componentRegistry.getAllComponents().keys.forEach { id ->
+          //       componentRegistry.clearComponent(id)
+          //     }
+          //     println("✅ Component registry cleared")
+          //   }
+          // } catch (e: Exception) {
+          //   println("⚠️ Error clearing component registry: ${e.message}")
+          // }
 
           // Clear captured images
           try {
@@ -722,6 +724,26 @@ class RNIslandModule(reactContext: ReactApplicationContext) :
     } catch (e: Exception) {
       println("❌ Error storing view reference: ${e.message}")
       promise.reject("STORE_ERROR", "Failed to store view reference", e)
+    }
+  }
+
+  @ReactMethod
+  override fun clearViewReference(componentId: String, promise: Promise) {
+    try {
+      if (!::componentRegistry.isInitialized) {
+        componentRegistry = ComponentRegistry.shared
+      }
+      componentRegistry.clearComponent(componentId)
+      println("✅ Cleared view reference for component: $componentId")
+
+      // Clear the captured image
+      componentImages.remove(componentId)
+      println("✅ Cleared captured image for component: $componentId")
+
+      promise.resolve(true)
+    } catch (e: Exception) {
+      println("❌ Error clearing view reference: ${e.message}")
+      promise.reject("CLEAR_ERROR", "Failed to clear view reference", e)
     }
   }
 

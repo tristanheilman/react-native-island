@@ -5,6 +5,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 const BBLiveActivityBody = () => {
   const [activeBases, setActiveBases] = useState<number[]>([]);
+  const [score, setScore] = useState({
+    home: 0,
+    away: 0,
+  });
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -14,6 +18,10 @@ const BBLiveActivityBody = () => {
       );
 
       setActiveBases(newActiveBases);
+      setScore({
+        home: Math.floor(Math.random() * 10),
+        away: Math.floor(Math.random() * 10),
+      });
     }, 9000);
 
     return () => clearInterval(interval);
@@ -25,25 +33,51 @@ const BBLiveActivityBody = () => {
         <View style={styles.teamContainer}>
           <View style={styles.headerContainer}>
             <Text style={styles.headerText}>KC</Text>
-            <Text style={styles.scoreText}>7</Text>
+            <Text style={styles.scoreText}>{score.home}</Text>
           </View>
           <Text style={styles.text}>LeMoine</Text>
           <Text style={styles.text}>3.07 ERA</Text>
         </View>
         <View style={styles.inningContainer}>
-          <View style={styles.inningGraphicContainer}>
-            <Icon
-              name={activeBases[0] === 1 ? 'square' : 'square-o'}
-              size={30}
-              color="#000"
-            />
+          <View style={styles.inningGraphicContainerRow}>
+            <View
+              style={[
+                styles.inningGraphicContainer,
+                { marginTop: 30, marginRight: -15 },
+              ]}
+            >
+              <Icon
+                name={activeBases[0] === 1 ? 'square' : 'square-o'}
+                size={30}
+                color="#000"
+              />
+            </View>
+            <View
+              style={[
+                styles.inningGraphicContainer,
+                { marginTop: 5, marginRight: 0 },
+              ]}
+            >
+              <Icon
+                name={activeBases[1] === 1 ? 'square' : 'square-o'}
+                size={30}
+                color="#000"
+              />
+            </View>
+            <View style={[styles.inningGraphicContainer, { marginTop: 30 }]}>
+              <Icon
+                name={activeBases[2] === 1 ? 'square' : 'square-o'}
+                size={30}
+                color="#000"
+              />
+            </View>
           </View>
           <Text style={styles.inningText}>Bot 9th 3-2, 2 out</Text>
         </View>
         <View style={styles.rightTeamContainer}>
           <View style={styles.headerContainer}>
             <Text style={styles.headerText}>SF</Text>
-            <Text style={styles.scoreText}>3</Text>
+            <Text style={styles.scoreText}>{score.away}</Text>
           </View>
           <Text style={styles.text}>Stern</Text>
           <Text style={styles.text}>.312 AVG</Text>
@@ -91,9 +125,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  inningGraphicContainerRow: {
+    flexDirection: 'row',
+    gap: 5,
+  },
   inningGraphicContainer: {
-    position: 'relative',
-    marginTop: 5,
+    //position: 'relative',
+    //marginTop: 5,
+    transform: [{ rotate: '45deg' }],
   },
   inningText: {
     color: 'white',

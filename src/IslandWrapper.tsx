@@ -41,6 +41,7 @@ const IslandWrapper = ({ componentId, children }: IslandWrapperProps) => {
 
     return () => {
       console.log(`Component ${componentId} unmounted`);
+      RNIsland.clearViewReference(componentId);
     };
   }, [componentId]);
 
@@ -62,10 +63,6 @@ export default IslandWrapper;
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
     backgroundColor: 'transparent',
   },
 });

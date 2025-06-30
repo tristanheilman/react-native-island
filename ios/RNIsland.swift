@@ -261,6 +261,13 @@ class RNIsland: RCTEventEmitter {
         }
     }
 
+    @objc
+    func clearViewReference(_ componentId: String, resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+        ComponentRegistry.shared.clearComponent(id: componentId)
+        print("✅ Cleared view reference for component: \(componentId)")
+        resolve(componentId)
+    }
+
     private func areActivitiesEnabled() -> Bool {
         if #available(iOS 16.2, *) {
             return ActivityAuthorizationInfo.init().areActivitiesEnabled

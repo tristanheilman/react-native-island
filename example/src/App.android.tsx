@@ -30,7 +30,6 @@ export default function App() {
   useEffect(() => {
     // setAppGroup('group.island.example');
     // registerComponent('lockScreen', 'BBLiveActivityLockScreen');
-    registerComponent('body', 'BBLiveActivityBody');
     // registerComponent('compactLeading', 'BBLiveActivityCompact');
     // registerComponent('compactTrailing', 'BBLiveActivityCompact');
     // registerComponent('minimal', 'BBLiveActivityCompact');
@@ -54,6 +53,7 @@ export default function App() {
 
   const startActivity = async () => {
     setStartingActivity(true);
+    registerComponent('body', 'BBLiveActivityBody');
     const activityId = await startIslandActivity({
       bodyComponentId: 'body',
     });
