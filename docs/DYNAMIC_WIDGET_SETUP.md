@@ -17,11 +17,15 @@
     ![iOS_Setup_Step3a](./images/iOS_Setup_Step3a.png)
 
 
-    4a. Add a new swift file to your DynamicWidgetExtension named `ReactNativeViewWrapper.swift` and paste the below code into the file. [Copy Wrapper Swift File](../example/ios/DynamicWidgetExtension/ReactNativeViewWrapper.swift)
+    4a. Add a new swift file to your DynamicWidgetExtension named `ReactNativeViewWrapper.swift` and paste in the canonical template. [Copy Wrapper Swift File](../resources/ReactNativeViewWrapper.swift)
 
-    **IMPORTANT**: Make sure to update the ReactNativeViewWrapper.swift file `PreRenderedComponentView` to utilize the correct app group string that you plan to utilize in step 5.
+    **IMPORTANT**: Update the `APP_GROUP` constant at the top of `ReactNativeViewWrapper.swift` to the App Group string you create in step 5 (and pass to `setAppGroup(...)` from JavaScript).
 
-    4b. Replace the code in the `DynamicWidgetLiveActivity.swift` file. [Copy LiveActivity Swift File](../example/ios/DynamicWidgetExtension/DynamicWidgetExtensionLiveActivity.swift)
+    4b. Replace the code in the `DynamicWidgetExtensionLiveActivity.swift` file with the canonical template. [Copy LiveActivity Swift File](../resources/DynamicWidgetExtensionLiveActivity.swift)
+
+    You can also copy `DynamicWidgetExtensionBundle.swift`. [Copy Bundle Swift File](../resources/DynamicWidgetExtensionBundle.swift)
+
+    A complete, ready-to-reference version of all of these lives in [`example/ios/DynamicWidgetExtension`](../example/ios/DynamicWidgetExtension).
 
 5. Add the `App Groups` capability to both the main project and the DynamicWidgetExtension and create a new app group.
 
