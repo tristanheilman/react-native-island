@@ -1,7 +1,7 @@
 {
   "name": "react-native-island",
   "version": "0.1.0",
-  "description": "iOS Live Activity & Android Bubbles bridge for React Native",
+  "description": "Cross-platform Live Activities for React Native — iOS Live Activities (Lock Screen + Dynamic Island) and Android ongoing notifications rendered from your RN UI, on the New Architecture.",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
   "exports": {
@@ -47,6 +47,14 @@
     "ios",
     "android",
     "live-activity",
+    "live-activities",
+    "dynamic-island",
+    "activitykit",
+    "widgetkit",
+    "notifications",
+    "new-architecture",
+    "fabric",
+    "turbomodule",
     "widget"
   ],
   "repository": {
