@@ -18,7 +18,7 @@ class RNIslandPackage : BaseReactPackage() {
   }
 
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
-    return listOf(ReactNativeBubbleViewManager())
+    return emptyList()
   }
 
   override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
