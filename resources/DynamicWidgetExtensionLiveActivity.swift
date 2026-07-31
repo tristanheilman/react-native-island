@@ -2,80 +2,32 @@ import ActivityKit
 import WidgetKit
 import SwiftUI
 
+// Canonical Live Activity template for react-native-island.
+//
+// Copy this file (and ReactNativeViewWrapper.swift) into your Widget Extension
+// target. Each region renders a pre-rendered snapshot of the matching React
+// Native component, keyed by the componentId carried in the activity's
+// ContentState. See docs/DYNAMIC_WIDGET_SETUP.md.
+
 struct DynamicWidgetExtensionAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
-        var headerComponentId: String
-        var headerProps: String
         var bodyComponentId: String
-        var bodyProps: String
-        var footerComponentId: String
-        var footerProps: String
-        
-        init(headerComponentId: String = "", headerProps: String = "",
-             bodyComponentId: String = "", bodyProps: String = "",
-             footerComponentId: String = "", footerProps: String = "") {
-            self.headerComponentId = headerComponentId
-            self.headerProps = headerProps
+        var lockScreenComponentId: String
+        var compactLeadingComponentId: String
+        var compactTrailingComponentId: String
+        var minimalComponentId: String
+
+        init(lockScreenComponentId: String = "",
+             bodyComponentId: String = "",
+             compactLeadingComponentId: String = "",
+             compactTrailingComponentId: String = "",
+             minimalComponentId: String = "") {
+            self.lockScreenComponentId = lockScreenComponentId
             self.bodyComponentId = bodyComponentId
-            self.bodyProps = bodyProps
-            self.footerComponentId = footerComponentId
-            self.footerProps = footerProps
+            self.compactLeadingComponentId = compactLeadingComponentId
+            self.compactTrailingComponentId = compactTrailingComponentId
+            self.minimalComponentId = minimalComponentId
         }
-    }
-}
-
-struct DynamicHeaderView: View {
-    let componentId: String
-    let props: String
-    
-    var body: some View {
-        Text("Header")
-        // ReactNativeViewWrapper(componentId: componentId, props: props)
-        //     .frame(height: 60)
-    }
-}
-
-struct DynamicBodyView: View {
-    let componentId: String
-    let props: String
-
-    var body: some View {
-        Text("Body")
-        // ReactNativeViewWrapper(componentId: componentId, props: props)
-        //     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
-struct DynamicFooterView: View {
-    let componentId: String
-    let props: String
-    
-    var body: some View {
-        Text("Footer")
-        // ReactNativeViewWrapper(componentId: componentId, props: props)
-        //     .frame(height: 40)
-    }
-}
-
-struct DynamicCompactView: View {
-    let componentId: String
-    let props: String
-    
-    var body: some View {
-        Text("Compact")
-        // ReactNativeViewWrapper(componentId: componentId, props: props)
-        //     .frame(width: 30, height: 30)
-    }
-}
-
-struct DynamicMinimalView: View {
-    let componentId: String
-    let props: String
-    
-    var body: some View {
-        Text("Minimal")
-        // ReactNativeViewWrapper(componentId: componentId, props: props)
-        //     .frame(width: 20, height: 20)
     }
 }
 
@@ -83,61 +35,27 @@ struct DynamicMinimalView: View {
 struct DynamicWidgetExtensionLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: DynamicWidgetExtensionAttributes.self) { context in
-            // Lock screen/banner UI goes here
+            // Lock screen / banner UI
             VStack {
-                DynamicHeaderView(
-                    componentId: context.state.headerComponentId,
-                    props: context.state.headerProps
-                )
-                DynamicBodyView(
-                    componentId: context.state.bodyComponentId,
-                    props: context.state.bodyProps
-                )
-                DynamicFooterView(
-                    componentId: context.state.footerComponentId,
-                    props: context.state.footerProps
-                )
+                ReactNativeViewWrapper(componentId: context.state.lockScreenComponentId)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .padding()
         } dynamicIsland: { context in
             DynamicIsland {
-                // Expanded UI goes here
-                DynamicIslandExpandedRegion(.leading, priority: 1, content: {
-                    DynamicHeaderView(
-                        componentId: context.state.headerComponentId,
-                        props: context.state.headerProps
-                    )
-                })
-                DynamicIslandExpandedRegion(.trailing, priority: 1, content: {
-                    DynamicFooterView(
-                        componentId: context.state.footerComponentId,
-                        props: context.state.footerProps
-                    )
-                })
-                DynamicIslandExpandedRegion(.center, priority: 1, content: {
-                    DynamicBodyView(
-                        componentId: context.state.bodyComponentId,
-                        props: context.state.bodyProps
-                    )
+                // Expanded UI
+                DynamicIslandExpandedRegion(.center, priority: 3, content: {
+                    ReactNativeViewWrapper(componentId: context.state.bodyComponentId)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 })
             } compactLeading: {
-                // Compact leading UI
-                DynamicCompactView(
-                    componentId: context.state.headerComponentId,
-                    props: context.state.headerProps
-                )
+                ReactNativeViewWrapper(componentId: context.state.compactLeadingComponentId)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } compactTrailing: {
-                // Compact trailing UI
-                DynamicCompactView(
-                    componentId: context.state.footerComponentId,
-                    props: context.state.footerProps
-                )
+                ReactNativeViewWrapper(componentId: context.state.compactTrailingComponentId)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } minimal: {
-                // Minimal UI
-                DynamicMinimalView(
-                    componentId: context.state.bodyComponentId,
-                    props: context.state.bodyProps
-                )
+                ReactNativeViewWrapper(componentId: context.state.minimalComponentId)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
     }
