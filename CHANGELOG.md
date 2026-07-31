@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1](https://github.com/tristanheilman/react-native-island/compare/v0.1.0...v0.1.1) (2026-07-31)
+
+
+### Bug Fixes
+
+* correct package description (Android = notifications, not bubbles) ([2ea8a44](https://github.com/tristanheilman/react-native-island/commit/2ea8a44049d09c244831c8fa307ee89a06107470))
+* correct package description and refresh keywords ([62c85fe](https://github.com/tristanheilman/react-native-island/commit/62c85feb602def44642a08d8892bc4741185d8c0))
+
 ## 0.1.0 (2026-07-31)
 
 
