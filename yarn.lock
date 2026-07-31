@@ -10416,6 +10416,8 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
+  bin:
+    react-native-island-setup: auto-setup.js
   languageName: unknown
   linkType: soft
 
