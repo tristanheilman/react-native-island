@@ -18,6 +18,8 @@
     "android",
     "ios",
     "cpp",
+    "resources",
+    "auto-setup.js",
     "*.podspec",
     "react-native.config.js",
     "!ios/build",
@@ -53,6 +55,9 @@
   },
   "author": "Tristan Heilman <tristanheilman@outlook.com> (https://github.com/tristanheilman)",
   "license": "MIT",
+  "bin": {
+    "react-native-island-setup": "auto-setup.js"
+  },
   "bugs": {
     "url": "https://github.com/tristanheilman/react-native-island/issues"
   },

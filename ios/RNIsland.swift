@@ -8,6 +8,35 @@ import ActivityKit
 class RNIsland: RCTEventEmitter {
     var appGroup: String?
 
+    // Injected by the runtime under the New Architecture (bridgeless).
+    // See RCTInstance.mm: any module implementing `setSurfacePresenter:`
+    // receives the surface presenter automatically.
+    private var injectedSurfacePresenter: RCTSurfacePresenterStub?
+
+    @objc
+    func setSurfacePresenter(_ presenter: RCTSurfacePresenterStub) {
+        self.injectedSurfacePresenter = presenter
+    }
+
+    // Resolves the Fabric (New Arch) surface presenter. Under bridgeless
+    // (the New Arch default) the runtime injects it via setSurfacePresenter:.
+    private var surfacePresenter: RCTSurfacePresenterStub? {
+        return injectedSurfacePresenter
+    }
+
+    // Resolves a native UIView from a React tag across architectures.
+    // New Arch: RCTSurfacePresenter.findComponentViewWithTag; the wrapper
+    // uses collapsable={false} so the view is not flattened away.
+    // Old Arch: fall back to the legacy UIManager.
+    private func resolveView(reactTag: NSNumber) -> UIView? {
+        if let presenter = surfacePresenter {
+            if let view = presenter.findComponentView(withTag_DO_NOT_USE_DEPRECATED: reactTag.intValue) {
+                return view
+            }
+        }
+        return self.bridge?.uiManager?.view(forReactTag: reactTag)
+    }
+
     override func supportedEvents() -> [String]! {
         return []
     }
@@ -55,48 +84,63 @@ class RNIsland: RCTEventEmitter {
     @objc
     @available(iOS 16.2, *)
     func startIslandActivity(_ data: [String: String], resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
-        if areActivitiesEnabled() {
-            handlePrerendering(data: data)
-            
-            // Start the activity after a delay to allow pre-rendering
-            DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
-                let attributes = DynamicWidgetExtensionAttributes.ContentState(
-                    lockScreenComponentId: data["lockScreenComponentId"] as? String ?? "",
-                    bodyComponentId: data["bodyComponentId"] as? String ?? "",
-                    compactLeadingComponentId: data["compactLeadingComponentId"] as? String ?? "",
-                    compactTrailingComponentId: data["compactTrailingComponentId"] as? String ?? "",
-                    minimalComponentId: data["minimalComponentId"] as? String ?? ""
+        guard areActivitiesEnabled() else {
+            reject("ACTIVITY_DISABLED", "Live Activities are disabled", nil)
+            return
+        }
+
+        DispatchQueue.main.async {
+            // Snapshot every registered slot referenced in `data` before
+            // requesting the activity, so the widget has images to display.
+            self.renderRegisteredSlots(data)
+
+            let contentState = DynamicWidgetExtensionAttributes.ContentState(
+                lockScreenComponentId: data["lockScreenComponentId"] ?? "",
+                bodyComponentId: data["bodyComponentId"] ?? "",
+                compactLeadingComponentId: data["compactLeadingComponentId"] ?? "",
+                compactTrailingComponentId: data["compactTrailingComponentId"] ?? "",
+                minimalComponentId: data["minimalComponentId"] ?? ""
+            )
+
+            do {
+                let activity = try Activity.request(
+                    attributes: DynamicWidgetExtensionAttributes(),
+                    contentState: contentState
                 )
-                
-                do {
-                    let activity = try Activity.request(
-                        attributes: DynamicWidgetExtensionAttributes(),
-                        contentState: attributes
-                    )
-                    print("✅ Activity started with ID: \(activity.id)")
-                    resolve(activity.id)
-                } catch {
-                    print("❌ Error starting activity: \(error)")
-                    reject("ACTIVITY_START_ERROR", "Error starting activity", error)
-                }
+                print("✅ Activity started with ID: \(activity.id)")
+                resolve(activity.id)
+            } catch {
+                print("❌ Error starting activity: \(error)")
+                reject("ACTIVITY_START_ERROR", "Error starting activity", error)
             }
         }
     }
 
-    private func preRenderComponent(componentId: String) {
-        guard !componentId.isEmpty else { return }
-        
-        DispatchQueue.main.async {
-            // First, try to get an existing rendered view
-            print("Pre-rendering \(componentId) component...")
-            if let existingView = ComponentRegistry.shared.getViewReference(id: componentId) {
-                print("✅ Found existing view for component: \(componentId)")
-                self.captureViewImage(existingView, componentId: componentId)
+    // Returns the component ids referenced by an activity data payload,
+    // in slot order, skipping empty/missing slots.
+    private func componentIds(from data: [String: String]) -> [String] {
+        let slotKeys = [
+            "lockScreenComponentId",
+            "bodyComponentId",
+            "compactLeadingComponentId",
+            "compactTrailingComponentId",
+            "minimalComponentId",
+        ]
+        return slotKeys.compactMap { data[$0] }.filter { !$0.isEmpty }
+    }
+
+    // Snapshots every registered, on-screen slot view referenced in `data`
+    // into the shared App Group so the widget extension can display them.
+    // Must be called on the main thread (touches UIKit views).
+    private func renderRegisteredSlots(_ data: [String: String]) {
+        for id in Set(componentIds(from: data)) {
+            if let view = ComponentRegistry.shared.getViewReference(id: id) {
+                captureViewImage(view, componentId: id)
             } else {
-                print("❌ No existing view found for component: \(componentId), creating new one")
-                self.createAndRenderComponent(componentId: componentId)
+                print("⚠️ No registered view for component '\(id)'. Wrap it in " +
+                      "<IslandWrapper componentId=\"\(id)\"> and ensure it is mounted " +
+                      "before starting/updating the activity.")
             }
-            print("================================")
         }
     }
 
@@ -124,108 +168,42 @@ class RNIsland: RCTEventEmitter {
         print("✅ Successfully captured existing view for component: \(componentId) with size: \(image.size)")
     }
 
-    private func createAndRenderComponent(componentId: String) {
-        // Fallback to creating a new view (your existing implementation)
-        guard let bridge = RCTBridge.current() else {
-            print("❌ No React Native bridge available")
-            return
-        }
-        
-        // Create a temporary root view for rendering
-        let rootView = RCTRootView(
-            bridge: bridge,
-            moduleName: "DynamicLiveActivity",
-            initialProperties: [
-                "componentId": componentId,
-                "props": ""
-            ]
-        )
-        
-        // Set appropriate size for rendering (adjust based on your needs)
-        let renderSize = CGSize(width: 300, height: 200)
-        rootView.frame = CGRect(origin: .zero, size: renderSize)
-        
-        // Ensure the view is added to a window for proper rendering
-        let tempWindow = UIWindow(frame: CGRect(origin: .zero, size: renderSize))
-        tempWindow.addSubview(rootView)
-        tempWindow.makeKeyAndVisible()
-        
-        // Wait for the React Native component to render
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            // Create image renderer
-            let renderer = UIGraphicsImageRenderer(bounds: rootView.bounds)
-            let image = renderer.image { context in
-                // Ensure the view is properly laid out
-                rootView.layoutIfNeeded()
-                rootView.layer.render(in: context.cgContext)
-            }
-            
-            // Convert to PNG data
-            guard let imageData = image.pngData() else {
-                print("❌ Failed to convert image to data for component: \(componentId)")
-                return
-            }
-            
-            // Save to App Group storage
-            let userDefaults = UserDefaults(suiteName: self.appGroup)
-            userDefaults?.set(imageData, forKey: "rendered_\(componentId)")
-            userDefaults?.synchronize()
-            
-            print("✅ Successfully pre-rendered component: \(componentId) with size: \(image.size)")
-            
-            // Clean up
-            tempWindow.isHidden = true
-            rootView.removeFromSuperview()
-        }
-    }
-
-    private func handlePrerendering(data: [String: String]) {
-        let components = ["lockScreen", "body", "compactTrailing", "compactLeading", "minimal"]
-            
-        for id in components {
-            //debugComponentRendering(componentId: id)
-            preRenderComponent(componentId: id)
-        }
-        
-    }
-
     @objc
     @available(iOS 16.2, *)
     func updateIslandActivity(_ data: [String: String], resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
-        if areActivitiesEnabled() {
-            guard let activityId = data["id"] as? String else {
-                print("❌ Activity ID is required for update")
-                reject("ACTIVITY_ID_REQUIRED", "Activity ID is required for update", nil)
+        guard areActivitiesEnabled() else {
+            reject("ACTIVITY_DISABLED", "Live Activities are disabled", nil)
+            return
+        }
+        guard let activityId = data["id"], !activityId.isEmpty else {
+            print("❌ Activity ID is required for update")
+            reject("ACTIVITY_ID_REQUIRED", "Activity ID is required for update", nil)
+            return
+        }
+
+        DispatchQueue.main.async {
+            // Re-snapshot the referenced slots with their latest content.
+            self.renderRegisteredSlots(data)
+
+            // Find the activity by ID
+            guard let activity = Activity<DynamicWidgetExtensionAttributes>.activities.first(where: { $0.id == activityId }) else {
+                reject("ACTIVITY_NOT_FOUND", "Activity not found", nil)
                 return
             }
 
-            handlePrerendering(data: data)
-            
-            // Find the activity by ID
-            if let activity = Activity<DynamicWidgetExtensionAttributes>.activities.first(where: { $0.id == activityId }) {
-                let lockScreenComponentId = data["lockScreenComponentId"] as? String ?? activity.content.state.lockScreenComponentId
-                let bodyComponentId = data["bodyComponentId"] as? String ?? activity.content.state.bodyComponentId
-                let compactLeadingComponentId = data["compactLeadingComponentId"] as? String ?? activity.content.state.compactLeadingComponentId
-                let compactTrailingComponentId = data["compactTrailingComponentId"] as? String ?? activity.content.state.compactTrailingComponentId
-                let minimalComponentId = data["minimalComponentId"] as? String ?? activity.content.state.minimalComponentId
-                
-                let contentState = DynamicWidgetExtensionAttributes.ContentState(
-                    lockScreenComponentId: lockScreenComponentId,
-                    bodyComponentId: bodyComponentId,
-                    compactLeadingComponentId: compactLeadingComponentId,
-                    compactTrailingComponentId: compactTrailingComponentId,
-                    minimalComponentId: minimalComponentId
-                )
-                //let activityContent = ActivityContent(state: contentState, staleDate: nil)
-                
-                // Update the activity
-                Task {
-                    await activity.update(using: contentState)
-                }
-                resolve(activityId)
-            } else {
-                reject("ACTIVITY_NOT_FOUND", "Activity not found", nil)
+            let current = activity.content.state
+            let contentState = DynamicWidgetExtensionAttributes.ContentState(
+                lockScreenComponentId: data["lockScreenComponentId"] ?? current.lockScreenComponentId,
+                bodyComponentId: data["bodyComponentId"] ?? current.bodyComponentId,
+                compactLeadingComponentId: data["compactLeadingComponentId"] ?? current.compactLeadingComponentId,
+                compactTrailingComponentId: data["compactTrailingComponentId"] ?? current.compactTrailingComponentId,
+                minimalComponentId: data["minimalComponentId"] ?? current.minimalComponentId
+            )
+
+            Task {
+                await activity.update(using: contentState)
             }
+            resolve(activityId)
         }
     }
 
@@ -250,8 +228,8 @@ class RNIsland: RCTEventEmitter {
     @objc
     func storeViewReference(_ componentId: String, nodeHandle: NSNumber, resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
         DispatchQueue.main.async {
-            // Find the view by node handle
-            if let view = self.bridge?.uiManager.view(forReactTag: nodeHandle) {
+            // Find the view by node handle (New Arch aware)
+            if let view = self.resolveView(reactTag: nodeHandle) {
                 ComponentRegistry.shared.storeViewReference(id: componentId, view: view)
                 print("✅ Stored view reference for component: \(componentId)")
                 resolve(componentId)
@@ -259,6 +237,13 @@ class RNIsland: RCTEventEmitter {
                 reject("VIEW_NOT_FOUND", "Could not find view for node handle: \(nodeHandle)", nil)
             }
         }
+    }
+
+    @objc
+    func clearViewReference(_ componentId: String, resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+        ComponentRegistry.shared.clearComponent(id: componentId)
+        print("✅ Cleared view reference for component: \(componentId)")
+        resolve(componentId)
     }
 
     private func areActivitiesEnabled() -> Bool {
@@ -269,34 +254,6 @@ class RNIsland: RCTEventEmitter {
         }
     }
 
-    private func debugComponentRendering(componentId: String) {
-        print("=== Debug Component Rendering ===")
-        print("Component ID: \(componentId)")
-        
-        // Check if component is registered
-        if let componentName = ComponentRegistry.shared.getComponentName(id: componentId) {
-            print("✅ Component found in registry: \(componentName)")
-        } else {
-            print("❌ Component NOT found in registry")
-        }
-        
-        // Check bridge availability
-        if let bridge = RCTBridge.current() {
-            print("✅ React Native bridge available")
-        } else {
-            print("❌ React Native bridge NOT available")
-        }
-        
-        // Check App Group access
-        let userDefaults = UserDefaults(suiteName: self.appGroup)
-        if userDefaults != nil {
-            print("✅ App Group access available")
-        } else {
-            print("❌ App Group access NOT available")
-        }
-        
-        print("================================")
-    }
 }
 
 struct DynamicWidgetExtensionAttributes: ActivityAttributes {

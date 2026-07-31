@@ -33,5 +33,17 @@ target 'IslandExample' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # Workaround for the `fmt` consteval build error under newer Xcode/Clang
+    # (RN 0.79's folly pins an older fmt). Disabling FMT_USE_CONSTEVAL falls back
+    # to constexpr and compiles cleanly across Xcode versions.
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        defs = config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] || ['$(inherited)']
+        defs = [defs] unless defs.is_a?(Array)
+        defs << 'FMT_USE_CONSTEVAL=0' unless defs.include?('FMT_USE_CONSTEVAL=0')
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = defs
+      end
+    end
   end
 end

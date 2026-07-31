@@ -1,2 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required to post notifications on Android 13 (API 33)+. The host app
+         must also request this permission at runtime. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>
