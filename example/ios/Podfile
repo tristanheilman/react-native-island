@@ -35,14 +35,22 @@ target 'IslandExample' do
     )
 
     # Workaround for the `fmt` consteval build error under newer Xcode/Clang
-    # (RN 0.79's folly pins an older fmt). Disabling FMT_USE_CONSTEVAL falls back
-    # to constexpr and compiles cleanly across Xcode versions.
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        defs = config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] || ['$(inherited)']
-        defs = [defs] unless defs.is_a?(Array)
-        defs << 'FMT_USE_CONSTEVAL=0' unless defs.include?('FMT_USE_CONSTEVAL=0')
-        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = defs
+    # (RN 0.79's folly pins an older fmt). fmt's base.h defines FMT_USE_CONSTEVAL
+    # UNCONDITIONALLY from compiler detection (no #ifndef guard), so a
+    # -DFMT_USE_CONSTEVAL=0 preprocessor define just gets redefined away. The only
+    # reliable fix is to patch the header to force the value to 0 before it's used,
+    # falling back to constexpr which compiles cleanly across Xcode versions.
+    fmt_base = File.join(installer.sandbox.root, 'fmt', 'include', 'fmt', 'base.h')
+    if File.exist?(fmt_base)
+      contents = File.read(fmt_base)
+      sentinel = '// rn-island: force-disable consteval'
+      anchor = "#if FMT_USE_CONSTEVAL\n#  define FMT_CONSTEVAL consteval"
+      if !contents.include?(sentinel) && contents.include?(anchor)
+        patch = "#{sentinel}\n#undef FMT_USE_CONSTEVAL\n#define FMT_USE_CONSTEVAL 0\n#{anchor}"
+        contents = contents.sub(anchor, patch)
+        File.chmod(0644, fmt_base)
+        File.write(fmt_base, contents)
+        Pod::UI.puts 'Patched fmt/base.h to disable FMT_USE_CONSTEVAL'.green
       end
     end
   end
