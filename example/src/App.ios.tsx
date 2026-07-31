@@ -8,10 +8,10 @@ import {
 } from 'react-native';
 import {
   registerComponent,
-  startIslandActivity,
-  endIslandActivity,
-  updateIslandActivity,
-  getIslandList,
+  startLiveActivity,
+  endLiveActivity,
+  updateLiveActivity,
+  getLiveActivities,
   setAppGroup,
 } from 'react-native-island';
 import BBLiveActivityBody from './BaseballExample/BBLiveActivityBody';
@@ -38,16 +38,15 @@ export default function App() {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const list = await getIslandList();
-      if (list.length > 0) {
-        const activityId = list[0];
-        await updateIslandActivity({
-          id: activityId,
-          compactLeadingComponentId: 'compactLeading',
-          compactTrailingComponentId: 'compactTrailing',
-          minimalComponentId: 'minimal',
-          bodyComponentId: 'BubbleContent',
-          lockScreenComponentId: 'lockScreen',
+      const list = await getLiveActivities();
+      const activityId = list[0];
+      if (activityId) {
+        await updateLiveActivity(activityId, {
+          lockScreen: 'lockScreen',
+          body: 'body',
+          compactLeading: 'compactLeading',
+          compactTrailing: 'compactTrailing',
+          minimal: 'minimal',
         });
       } else {
         console.log('no activity');
@@ -58,14 +57,17 @@ export default function App() {
 
   const startActivity = async () => {
     setStartingActivity(true);
-    const activityId = await startIslandActivity({
-      lockScreenComponentId: 'lockScreen',
-      bodyComponentId: 'BubbleContent',
+    const activityId = await startLiveActivity({
+      lockScreen: 'lockScreen',
+      body: 'body',
+      compactLeading: 'compactLeading',
+      compactTrailing: 'compactTrailing',
+      minimal: 'minimal',
     });
 
     console.log('New Island Activity ID: ', activityId);
 
-    const list = await getIslandList();
+    const list = await getLiveActivities();
     console.log('Island Activity List: ', list);
     setActivityList(list);
     setStartingActivity(false);
@@ -73,34 +75,34 @@ export default function App() {
 
   const updateActivity = async () => {
     setUpdatingActivity(true);
-    const list = await getIslandList();
+    const list = await getLiveActivities();
     setActivityList(list);
 
-    const activityId = activityList[0];
-    const updatedId = await updateIslandActivity({
-      id: activityId,
-      lockScreenComponentId: 'lockScreen',
-      bodyComponentId: 'body',
-      compactLeadingComponentId: 'compactLeading',
-      compactTrailingComponentId: 'compactTrailing',
-      minimalComponentId: 'minimal',
-    });
-
-    console.log('Updated Island Activity ID: ', updatedId);
+    const activityId = list[0];
+    if (activityId) {
+      const updatedId = await updateLiveActivity(activityId, {
+        lockScreen: 'lockScreen',
+        body: 'body',
+        compactLeading: 'compactLeading',
+        compactTrailing: 'compactTrailing',
+        minimal: 'minimal',
+      });
+      console.log('Updated Island Activity ID: ', updatedId);
+    }
     setUpdatingActivity(false);
   };
 
   const endActivity = async () => {
     setEndingActivity(true);
-    await endIslandActivity();
-    const list = await getIslandList();
+    await endLiveActivity();
+    const list = await getLiveActivities();
     setActivityList(list);
     setEndingActivity(false);
   };
 
   const getActivities = async () => {
     setGettingActivities(true);
-    const list = await getIslandList();
+    const list = await getLiveActivities();
     setActivityList(list);
     setGettingActivities(false);
   };
